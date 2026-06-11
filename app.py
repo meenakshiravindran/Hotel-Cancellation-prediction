@@ -408,8 +408,8 @@ def build_pipeline():
     df_b.drop(columns=["reservation_status","reservation_status_date","company","index"],errors="ignore",inplace=True)
     df_b["children"]=df_b["children"].fillna(0); df_b["country"]=df_b["country"].fillna("Unknown"); df_b["agent"]=df_b["agent"].fillna(-1)
     for col in df_b.columns:
-        if df_b[col].dtype=="object": df_b[col]=df_b[col].fillna("Missing")
-        else: df_b[col]=df_b[col].fillna(df_b[col].median())
+        if df_b[col].dtype=="object" or str(df_b[col].dtype)=="string": df_b[col]=df_b[col].fillna("Missing")
+        elif pd.api.types.is_numeric_dtype(df_b[col]): df_b[col]=df_b[col].fillna(df_b[col].median())
     for col in df_b.select_dtypes(include="object").columns:
         le_tmp=LabelEncoder(); df_b[col]=le_tmp.fit_transform(df_b[col].astype(str))
     Xb=df_b.drop(columns=["is_canceled"]); yb=df_b["is_canceled"]
